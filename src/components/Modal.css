@@ -1,0 +1,12 @@
+.customModal {
+  position: absolute;
+  z-index: 1021;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.678);
+}

@@ -12,6 +12,15 @@ code {
     monospace;
 } */
 
+body {
+  overflow: hidden;
+}
+
+.App {
+  overflow: auto;
+  height: 100vh;
+}
+
 .sticky-top {
   position: -webkit-sticky;
   position: sticky;

@@ -6,38 +6,18 @@ import * as Yup from 'yup';
 
 import { AuthContext } from '../context/auth-context';
 import UpdatePost from './UpdatePost';
+import Modal from './Modal';
 
 const PostCard = ({ item }) => {
   const auth = useContext(AuthContext);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
+
   // const [initialValues, setInitialValues] = useState({
   //   title: '',
   //   description: '',
   //   img: '',
   //   user: '',
   // });
-
-  const initialValues = {
-    title: '',
-    description: '',
-    img: '',
-    user: auth._id,
-  };
-
-  const validationSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required.'),
-    description: Yup.string(),
-    img: Yup.string().required('Image is required.'),
-  });
-
-  const onSubmit = async (values, { resetForm }) => {
-    try {
-      resetForm();
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const deletePostHandler = async () => {
     try {
@@ -46,7 +26,7 @@ const PostCard = ({ item }) => {
       );
       console.log(data);
     } catch (error) {
-      console.log(error)      
+      console.log(error);
     }
   };
 
@@ -91,13 +71,12 @@ const PostCard = ({ item }) => {
           </h3>
           <p>{item.description}</p>
         </div>
-        {item.user._id === auth._id && (
+        {(item.user._id === auth._id || auth.role === 'admin') && (
           <div className="d-flex justify-content-end p-2">
             <button
               type="button"
               className="btn btn-success"
-              data-bs-toggle="modal"
-              data-bs-target="#updatePost"
+              onClick={() => setUpdateModal(true)}
             >
               Update
             </button>
@@ -114,34 +93,11 @@ const PostCard = ({ item }) => {
         <div className="card-footer text-muted">2 days ago</div>
       </div>
 
-      <div
-        className="modal fade"
-        id="updatePost"
-        tabIndex="-1"
-        aria-labelledby="updatePostLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content p-0">
-            <div className="modal-body p-0">
-              <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={onSubmit}
-              >
-                {(props) => (
-                  <UpdatePost
-                    props={props}
-                    item={item}
-                    error={error}
-                    loading={loading}
-                  />
-                )}
-              </Formik>
-            </div>
-          </div>
-        </div>
-      </div>
+      {updateModal && (
+        <Modal>
+          {<UpdatePost item={item} setUpdateModal={setUpdateModal} />}
+        </Modal>
+      )}
 
       <div
         className="modal fade"

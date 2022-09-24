@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import SettingsCard from '../components/SettingsCard';
+import { AuthContext } from '../context/auth-context';
+
 
 const Settings = () => {
-  return <SettingsCard />;
+  const auth = useContext(AuthContext)
+  return <SettingsCard user={auth} />;
 };
 
 export default Settings;

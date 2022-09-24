@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import Layout from './components/Layout';
@@ -10,8 +10,13 @@ import Settings from './views/Settings';
 import Post from './views/Post';
 import Guard from './components/Guard';
 import CreatePost from './views/CreatePost';
+import UserList from './views/UserList';
+import UserProfile from './views/UserProfile';
+import { AuthContext } from './context/auth-context';
 
 const AppRouter = () => {
+  const auth = useContext(AuthContext);
+
   return (
     <BrowserRouter>
       <div className="App">
@@ -49,7 +54,7 @@ const AppRouter = () => {
                 </Guard>
               }
             />
-            <Route 
+            <Route
               path="post/create"
               element={
                 <Guard>
@@ -57,6 +62,27 @@ const AppRouter = () => {
                 </Guard>
               }
             />
+            {auth.role === 'admin' && (
+              <Route path="users" exact>
+                <Route
+                  index
+                  exact
+                  element={
+                    <Guard>
+                      <UserList />
+                    </Guard>
+                  }
+                />
+                <Route
+                  path=":id"
+                  element={
+                    <Guard>
+                      <UserProfile />
+                    </Guard>
+                  }
+                />
+              </Route>
+            )}
           </Route>
 
           <Route path="/login" element={<Login />} />

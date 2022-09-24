@@ -44,6 +44,7 @@ const Login = (props) => {
   const onSubmit = async (values) => {
     const data = await loginUserApi(values.email, values.password);
     if (data) {
+      console.log(data);
       authData.getData(data);
       navigate('/');
     }
@@ -107,8 +108,8 @@ const Login = (props) => {
                   <div className="d-grid gap-2 mt-3">
                     <button className="btn btn-lg btn-primary" type="submit">
                       {loading ? (
-                        <div class="spinner-border" role="status">
-                          <span class="sr-only"></span>
+                        <div className="spinner-border" role="status">
+                          <span className="sr-only"></span>
                         </div>
                       ) : (
                         'Submit'

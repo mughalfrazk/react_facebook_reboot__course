@@ -1,20 +1,22 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
 import { AuthContext } from '../context/auth-context';
 
-const UpdatePost = ({ item, setUpdateModal }) => {
+const UpdateSettingsForm = ({ item, setUpdateModal }) => {
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const updatePostApi = async (values) => {
+  const updateUserApi = async (values) => {
     setLoading(true);
     try {
       const { data } = await axios.patch(
-        `http://localhost:5000/api/post/${item._id}`,
+        `http://localhost:5000/api/user/${item._id}`,
         values
       );
       setLoading(false);
@@ -28,22 +30,33 @@ const UpdatePost = ({ item, setUpdateModal }) => {
 
 
   const initialValues = {
-    title: item.title,
-    description: item.description,
+    first_name: item.first_name,
+    last_name: item.last_name,
+    bio: item.bio,
+    username: item.username,
     img: item.img,
-    user: auth._id,
   };
 
   const validationSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required.'),
-    description: Yup.string(),
-    img: Yup.string().required('Image is required.'),
+    first_name: Yup.string().required('First Name is required.'),
+    last_name: Yup.string().required('Last Name is required.'),
+    bio: Yup.string(),
+    username: Yup.string(),
+    img: Yup.string(),
   });
 
   const onSubmit = async (values, { resetForm }) => {
+    console.log(values);
     try {
-      await updatePostApi(values)
+      const user = await updateUserApi(values)
       resetForm();
+      if (item._id === auth._id) {
+        auth.getData(user.data)
+      } else {
+        navigate('/users')
+      }
+
+      setUpdateModal(false)
     } catch (error) {
       console.log(error);
     }
@@ -58,40 +71,76 @@ const UpdatePost = ({ item, setUpdateModal }) => {
       {(props) => (
         <Form className="card-body p-0 pt-4">
           <div className="p-4">
-            <h2 className="text-center">Update Post</h2>
+            <h2 className="text-center">Update User Settings</h2>
             {error && <h6 className="text-warning text-center">{error}</h6>}
             <div className="form-group has-success">
-              <label className="form-label mt-4" htmlFor="title">
-                Title
+              <label className="form-label mt-4" htmlFor="first_name">
+                First Name
               </label>
               <input
                 type="text"
-                name="title"
-                value={props.values.title}
+                name="first_name"
+                value={props.values.first_name}
                 onChange={props.handleChange}
-                className={`form-control ${props.errors.title && 'is-invalid'}`}
-                id="title"
+                className={`form-control ${props.errors.first_name && 'is-invalid'}`}
+                id="first_name"
               />
               <div className="invalid-feedback text-warning">
-                {props.errors.title}
+                {props.errors.first_name}
               </div>
             </div>
             <div className="form-group has-success">
-              <label className="form-label mt-4" htmlFor="description">
-                Description
+              <label className="form-label mt-4" htmlFor="last_name">
+                Last Name
               </label>
               <input
                 type="text"
-                name="description"
-                value={props.values.description}
+                name="last_name"
+                value={props.values.last_name}
                 onChange={props.handleChange}
                 className={`form-control ${
-                  props.errors.description && 'is-invalid'
+                  props.errors.last_name && 'is-invalid'
                 }`}
-                id="description"
+                id="last_name"
               />
               <div className="invalid-feedback text-warning">
-                {props.errors.description}
+                {props.errors.last_name}
+              </div>
+            </div>
+            <div className="form-group has-success">
+              <label className="form-label mt-4" htmlFor="bio">
+                Bio
+              </label>
+              <input
+                type="text"
+                name="bio"
+                value={props.values.bio}
+                onChange={props.handleChange}
+                className={`form-control ${
+                  props.errors.bio && 'is-invalid'
+                }`}
+                id="bio"
+              />
+              <div className="invalid-feedback text-warning">
+                {props.errors.bio}
+              </div>
+            </div>
+            <div className="form-group has-success">
+              <label className="form-label mt-4" htmlFor="username">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                value={props.values.username}
+                onChange={props.handleChange}
+                className={`form-control ${
+                  props.errors.username && 'is-invalid'
+                }`}
+                id="username"
+              />
+              <div className="invalid-feedback text-warning">
+                {props.errors.username}
               </div>
             </div>
             <div className="form-group has-success">
@@ -135,4 +184,4 @@ const UpdatePost = ({ item, setUpdateModal }) => {
   );
 };
 
-export default UpdatePost;
+export default UpdateSettingsForm;

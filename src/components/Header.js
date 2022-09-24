@@ -1,17 +1,15 @@
 import React, { useContext } from 'react';
-import { NavLink, useNavigate, Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import { AuthContext } from '../context/auth-context';
-import { setIntoLocalStorage } from '../utils/functions';
 
 const Header = () => {
-  const auth = useContext(AuthContext)
-  const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   const logoutUser = () => {
-    auth.getData('', '')
+    auth.getData('', '');
     localStorage.removeItem('auth-data');
-  }
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
@@ -54,7 +52,15 @@ const Header = () => {
                 Create New Post
               </NavLink>
             </li>
+            {auth.role === 'admin' && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/users">
+                  Users List
+                </NavLink>
+              </li>
+            )}
           </ul>
+            {auth.role === 'admin' && <span className="badge bg-dark rounded-pill">Admin</span>}
           <div className="dropdown">
             <a
               className="nav-link dropdown-toggle text-white"
@@ -82,16 +88,6 @@ const Header = () => {
               </button>
             </div>
           </div>
-          {/* <form className="d-flex">
-            <input
-              className="form-control me-sm-2"
-              type="text"
-              placeholder="Search"
-            />
-            <button className="btn btn-secondary my-2 my-sm-0" type="submit">
-              Search
-            </button>
-          </form> */}
         </div>
       </div>
     </nav>

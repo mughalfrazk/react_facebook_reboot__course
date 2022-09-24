@@ -8,5 +8,6 @@ export const AuthContext = createContext({
   username: '',
   img: '',
   email: '',
+  role: '',
   getData: () => {},
 });
