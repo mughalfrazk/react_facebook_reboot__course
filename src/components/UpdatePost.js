@@ -4,11 +4,14 @@ import * as Yup from 'yup';
 import axios from 'axios';
 
 import { AuthContext } from '../context/auth-context';
+import { useNavigate } from 'react-router-dom';
 
 const UpdatePost = ({ item, setUpdateModal }) => {
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [updatedImg, setUpdatedImg] = useState();
 
   const updatePostApi = async (values) => {
     setLoading(true);
@@ -26,28 +29,43 @@ const UpdatePost = ({ item, setUpdateModal }) => {
     }
   };
 
-
   const initialValues = {
     title: item.title,
     description: item.description,
-    img: item.img,
     user: auth._id,
   };
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('Title is required.'),
     description: Yup.string(),
-    img: Yup.string().required('Image is required.'),
   });
 
   const onSubmit = async (values, { resetForm }) => {
+
+    const bodyFormData = new FormData();
+
+    for (const key in values) {
+      if (Object.hasOwnProperty.call(values, key)) {
+        bodyFormData.append(key, values[key]);
+      }
+    }
+
+    bodyFormData.append('img', updatedImg)
+
+
     try {
-      await updatePostApi(values)
+      await updatePostApi(bodyFormData);
       resetForm();
+      setUpdateModal(false)
+      navigate(`/post/${item._id}`);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const onImageSelectHandler = (event) => {
+    setUpdatedImg(event.target.files[0])
+  }
 
   return (
     <Formik
@@ -99,10 +117,10 @@ const UpdatePost = ({ item, setUpdateModal }) => {
                 Image
               </label>
               <input
-                type="text"
+                type="file"
                 name="img"
-                value={props.values.img}
-                onChange={props.handleChange}
+                accept=".png,.jpg,.jpeg"
+                onChange={onImageSelectHandler}
                 className={`form-control ${props.errors.img && 'is-invalid'}`}
                 id="img"
               />

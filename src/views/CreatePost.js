@@ -10,6 +10,7 @@ const CreatePost = (props) => {
   const authData = useContext(AuthContext);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploadedImg, setUploadedImg] = useState();
 
   const createPostApi = async (values) => {
     setLoading(true);
@@ -30,25 +31,38 @@ const CreatePost = (props) => {
   const initialValues = {
     title: '',
     description: '',
-    img: '',
     user: authData._id,
   };
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('Title is required.'),
     description: Yup.string(),
-    img: Yup.string().required('Image is required.'),
   });
 
   const onSubmit = async (values, { resetForm }) => {
+    const bodyFormData = new FormData();
+
+    for (const key in values) {
+      if (Object.hasOwnProperty.call(values, key)) {
+        bodyFormData.append(key, values[key]);
+      }
+    }
+
+    bodyFormData.append('img', uploadedImg)
+
     try {
-      const data = await createPostApi(values);
+      const data = await createPostApi(bodyFormData);
       navigate(`/post/${data._id}`);
       resetForm();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
+
+  const onImgUploadHandler = (event) => {
+    console.log(event.target.files[0])
+    setUploadedImg(event.target.files[0])
+  }
 
   return (
     <div className="row align-items-center full-height">
@@ -104,10 +118,10 @@ const CreatePost = (props) => {
                     Image
                   </label>
                   <input
-                    type="text"
+                    type="file"
                     name="img"
-                    value={props.values.img}
-                    onChange={props.handleChange}
+                    accept=".png,.jpg,.jpeg"
+                    onChange={onImgUploadHandler}
                     className={`form-control ${
                       props.errors.img && 'is-invalid'
                     }`}

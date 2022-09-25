@@ -40,7 +40,7 @@ const PostCard = ({ item }) => {
                 className="rounded-circle object-fit"
                 src={
                   item.user.img
-                    ? item.user.img
+                    ? `http://localhost:5000${item.user.img}`
                     : 'https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png'
                 }
                 alt={item.user.name}
@@ -58,7 +58,7 @@ const PostCard = ({ item }) => {
         </div>
         <img
           className="object-fit"
-          src={item.img}
+          src={`http://localhost:5000${item.img}`}
           alt="Post Image"
           width="100%"
           height="400px"
