@@ -9,26 +9,23 @@ import UpdatePost from './UpdatePost';
 import Modal from './Modal';
 
 const PostCard = ({ item }) => {
-  // const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const [updateModal, setUpdateModal] = useState(false);
   const [deletePostModal, setDeletePostModal] = useState(false);
   const [disablePostModal, setDisablePostModal] = useState(false);
 
-  // const [initialValues, setInitialValues] = useState({
-  //   title: '',
-  //   description: '',
-  //   img: '',
-  //   user: '',
-  // });
-
   const deletePostHandler = async () => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/post/${item._id}`
+        `${process.env.REACT_APP_BACKEND_URL}api/post/${item._id}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${auth.token}`
+          }
+        }
       );
       console.log(data);
-      setDeletePostModal(false)
+      setDeletePostModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -37,10 +34,10 @@ const PostCard = ({ item }) => {
   const disablePostHandler = async (status) => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:5000/api/post/active/${item._id}?active=${status}`
+        `${process.env.REACT_APP_BACKEND_URL}api/post/active/${item._id}?active=${status}`
       );
       console.log(data);
-      setDisablePostModal(false)
+      setDisablePostModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -56,7 +53,7 @@ const PostCard = ({ item }) => {
                 className="rounded-circle object-fit"
                 src={
                   item.user.img
-                    ? `http://localhost:5000${item.user.img}`
+                    ? `${process.env.REACT_APP_BACKEND_URL}${item.user.img}`
                     : 'https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png'
                 }
                 alt={item.user.name}
@@ -74,7 +71,7 @@ const PostCard = ({ item }) => {
         </div>
         <img
           className="object-fit"
-          src={`http://localhost:5000${item.img}`}
+          src={`${process.env.REACT_APP_BACKEND_URL}${item.img}`}
           alt="Post Image"
           width="100%"
           height="400px"
@@ -115,7 +112,8 @@ const PostCard = ({ item }) => {
         <div
           className={`card-footer ${item.active ? '' : 'bg-danger'} text-muted`}
         >
-          {item.user._id === auth._id && 'Your post is disabled by the admin, contact customer support.'}
+          {item.user._id === auth._id &&
+            'Your post is disabled by the admin, contact customer support.'}
         </div>
       </div>
 

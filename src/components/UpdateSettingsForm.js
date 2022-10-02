@@ -16,8 +16,13 @@ const UpdateSettingsForm = ({ item, setUpdateModal }) => {
     setLoading(true);
     try {
       const { data } = await axios.patch(
-        `http://localhost:5000/api/user/${item._id}`,
-        values
+        `${process.env.REACT_APP_BACKEND_URL}api/user/${item._id}`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
       );
       setLoading(false);
       return data;
@@ -27,7 +32,6 @@ const UpdateSettingsForm = ({ item, setUpdateModal }) => {
       console.log(error);
     }
   };
-
 
   const initialValues = {
     first_name: item.first_name,
@@ -48,15 +52,15 @@ const UpdateSettingsForm = ({ item, setUpdateModal }) => {
   const onSubmit = async (values, { resetForm }) => {
     console.log(values);
     try {
-      const user = await updateUserApi(values)
+      const user = await updateUserApi(values);
       resetForm();
       if (item._id === auth._id) {
-        auth.getData(user.data)
+        auth.getData(user.data);
       } else {
-        navigate('/users')
+        navigate('/users');
       }
 
-      setUpdateModal(false)
+      setUpdateModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -82,7 +86,9 @@ const UpdateSettingsForm = ({ item, setUpdateModal }) => {
                 name="first_name"
                 value={props.values.first_name}
                 onChange={props.handleChange}
-                className={`form-control ${props.errors.first_name && 'is-invalid'}`}
+                className={`form-control ${
+                  props.errors.first_name && 'is-invalid'
+                }`}
                 id="first_name"
               />
               <div className="invalid-feedback text-warning">
@@ -116,9 +122,7 @@ const UpdateSettingsForm = ({ item, setUpdateModal }) => {
                 name="bio"
                 value={props.values.bio}
                 onChange={props.handleChange}
-                className={`form-control ${
-                  props.errors.bio && 'is-invalid'
-                }`}
+                className={`form-control ${props.errors.bio && 'is-invalid'}`}
                 id="bio"
               />
               <div className="invalid-feedback text-warning">

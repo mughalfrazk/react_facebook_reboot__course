@@ -15,6 +15,7 @@ import UserProfile from './views/UserProfile';
 import { AuthContext } from './context/auth-context';
 import DisabledPosts from './views/DisabledPosts';
 import CreateAdmin from './views/CreateAdmin';
+import Error401 from './views/Error401';
 
 const AppRouter = () => {
   const auth = useContext(AuthContext);
@@ -64,27 +65,27 @@ const AppRouter = () => {
                 </Guard>
               }
             />
+            <Route path="users" exact>
+              <Route
+                index
+                exact
+                element={
+                  <Guard>
+                    <UserList />
+                  </Guard>
+                }
+              />
+              <Route
+                path=":id"
+                element={
+                  <Guard>
+                    <UserProfile />
+                  </Guard>
+                }
+              />
+            </Route>
             {auth.role === 'admin' && (
               <Fragment>
-                <Route path="users" exact>
-                  <Route
-                    index
-                    exact
-                    element={
-                      <Guard>
-                        <UserList />
-                      </Guard>
-                    }
-                  />
-                  <Route
-                    path=":id"
-                    element={
-                      <Guard>
-                        <UserProfile />
-                      </Guard>
-                    }
-                  />
-                </Route>
                 <Route
                   path="disabled-post"
                   element={
@@ -107,6 +108,8 @@ const AppRouter = () => {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Signup />} />
+
+          <Route path="/401" element={<Error401 />} />
 
           {/* Redirect Route */}
           <Route path="*" element={<Navigate to="/" replace />} />

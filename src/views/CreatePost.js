@@ -6,11 +6,12 @@ import * as Yup from 'yup';
 import { AuthContext } from '../context/auth-context';
 
 const CreatePost = (props) => {
+  const auth = useContext(AuthContext);
   const setSpacing = useOutletContext();
 
   useEffect(() => {
-    setSpacing(true)
-  }, [])
+    setSpacing(true);
+  }, []);
 
   const navigate = useNavigate();
   const authData = useContext(AuthContext);
@@ -22,8 +23,13 @@ const CreatePost = (props) => {
     setLoading(true);
     try {
       const { data } = await axios.post(
-        'http://localhost:5000/api/post',
-        values
+        `${process.env.REACT_APP_BACKEND_URL}api/post`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
       );
       setLoading(false);
       return data;
@@ -54,7 +60,7 @@ const CreatePost = (props) => {
       }
     }
 
-    bodyFormData.append('img', uploadedImg)
+    bodyFormData.append('img', uploadedImg);
 
     try {
       const data = await createPostApi(bodyFormData);
@@ -66,9 +72,9 @@ const CreatePost = (props) => {
   };
 
   const onImgUploadHandler = (event) => {
-    console.log(event.target.files[0])
-    setUploadedImg(event.target.files[0])
-  }
+    console.log(event.target.files[0]);
+    setUploadedImg(event.target.files[0]);
+  };
 
   return (
     <div className="row align-items-center full-height">

@@ -1,9 +1,11 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useOutletContext } from 'react-router-dom';
 import PostCard from '../components/PostCard';
+import { AuthContext } from '../context/auth-context';
 
 const Post = () => {
+  const auth = useContext(AuthContext);
   const setSpacing = useOutletContext();
   const params = useParams();
   const [post, setPost] = useState();
@@ -14,7 +16,11 @@ const Post = () => {
 
   const getSingleItem = async (id) => {
     try {
-      const { data } = await axios.get(`http://localhost:5000/api/post/${id}`)
+      const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}api/post/${id}`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`
+        }
+      })
       setPost(data[0])
     } catch (error) {
       console.log(error)

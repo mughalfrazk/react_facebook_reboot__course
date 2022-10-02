@@ -5,11 +5,7 @@ import Header from './Header';
 
 const Layout = () => {
   const [spacing, setSpacing] = useState(true);
-
-  useEffect(() => {
-    console.log(spacing);
-  }, [spacing]);
-
+  
   return (
     <div className="layout">
       <Header />

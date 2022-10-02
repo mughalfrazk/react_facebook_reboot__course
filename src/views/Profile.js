@@ -6,18 +6,22 @@ import PostList from '../components/PostList';
 import { AuthContext } from '../context/auth-context';
 
 const Profile = () => {
+  const auth = useContext(AuthContext)
   const setSpacing = useOutletContext();
 
   useEffect(() => {
     setSpacing(true);
   }, []);
 
-  const auth = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
 
   const getUserPosts = async (id) => {
     try {
-      const { data } = await axios.get(`http://localhost:5000/api/post?userId=${id}`)
+      const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}api/post?userId=${id}`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`
+        }
+      })
       setPosts(data);
     } catch (error) {
       console.log(error);

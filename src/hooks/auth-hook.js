@@ -12,11 +12,10 @@ export const useAuth = () => {
     username: data?.username,
     img: data?.img,
     role: data?.role,
+    token: data?.token
   });
 
   const getUserData = (user) => {
-    console.log(user);
-
     setUserData(user);
     setIntoLocalStorage('auth-data', user);
   };
@@ -30,6 +29,7 @@ export const useAuth = () => {
     username: userData?.username,
     img: userData?.img,
     role: userData?.role,
+    token: userData?.token,
     getData: getUserData,
   };
 };

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { Fragment, useContext, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth-context';
 import Modal from './Modal';
 import UpdateSettingsForm from './UpdateSettingsForm';
 
 const SettingsCard = ({ user }) => {
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const imageRef = useRef();
   const [updateProfileModal, setUpdateProfileModal] = useState(false);
@@ -22,12 +24,20 @@ const SettingsCard = ({ user }) => {
 
     try {
       const { data } = await axios.patch(
-        `http://localhost:5000/api/user/image/${user._id}`,
-        bodyFormData
+        `${process.env.REACT_APP_BACKEND_URL}api/user/image/${user._id}`,
+        bodyFormData,
+        {
+          headers: {
+            "Authorization": `Bearer ${auth.token}`
+          }
+        }
       );
       console.log(data);
       auth.getData(data);
     } catch (error) {
+      if (error.response.data.status === 401) {
+        navigate("/401");
+      }
       console.log(error);
     }
   };
@@ -35,7 +45,7 @@ const SettingsCard = ({ user }) => {
   const deactiveUserHandler = async (status) => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:5000/api/user/active/${user._id}?active=${status}`
+        `${process.env.REACT_APP_BACKEND_URL}api/user/active/${user._id}?active=${status}`
       );
       console.log(data);
       setDeactivateModal(false);
@@ -50,7 +60,7 @@ const SettingsCard = ({ user }) => {
         <div className="m-auto pt-5 pb-3">
           <img
             className="rounded-circle object-fit"
-            src={`http://localhost:5000${user.img}`}
+            src={`${process.env.REACT_APP_BACKEND_URL}${user.img}`}
             alt="Profile Image"
             width="200px"
             height="200px"

@@ -20,12 +20,15 @@ const Signup = ({ role }) => {
     setLoading(true);
     try {
       const { data } = await axios.post(
-        'http://localhost:5000/api/user/register',
+        `${process.env.REACT_APP_BACKEND_URL}api/user/register`,
         values
       );
       setLoading(false);
       return data;
     } catch (error) {
+      if (error.response.data.status === 401) {
+        navigate("/401");
+      }
       setError(error.response.data.message);
       setLoading(false);
       console.log(error);

@@ -17,12 +17,20 @@ const UpdatePost = ({ item, setUpdateModal }) => {
     setLoading(true);
     try {
       const { data } = await axios.patch(
-        `http://localhost:5000/api/post/${item._id}`,
-        values
+        `${process.env.REACT_APP_BACKEND_URL}api/post/${item._id}`,
+        values,
+        {
+          headers: {
+            "Authorization": `Bearer ${auth.token}`
+          }
+        }
       );
       setLoading(false);
       return data;
     } catch (error) {
+      if (error.response.data.status === 401) {
+        navigate("/401");
+      }
       setLoading(false);
       setError(error.response.data.message);
       console.log(error);
