@@ -1,6 +1,6 @@
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -9,8 +9,11 @@ import UpdatePost from './UpdatePost';
 import Modal from './Modal';
 
 const PostCard = ({ item }) => {
+  // const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const [updateModal, setUpdateModal] = useState(false);
+  const [deletePostModal, setDeletePostModal] = useState(false);
+  const [disablePostModal, setDisablePostModal] = useState(false);
 
   // const [initialValues, setInitialValues] = useState({
   //   title: '',
@@ -25,6 +28,19 @@ const PostCard = ({ item }) => {
         `http://localhost:5000/api/post/${item._id}`
       );
       console.log(data);
+      setDeletePostModal(false)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const disablePostHandler = async (status) => {
+    try {
+      const { data } = await axios.patch(
+        `http://localhost:5000/api/post/active/${item._id}?active=${status}`
+      );
+      console.log(data);
+      setDisablePostModal(false)
     } catch (error) {
       console.log(error);
     }
@@ -75,7 +91,14 @@ const PostCard = ({ item }) => {
           <div className="d-flex justify-content-end p-2">
             <button
               type="button"
-              className="btn btn-success"
+              className="btn btn-secondary"
+              onClick={() => setDisablePostModal(true)}
+            >
+              {item.active ? 'Disable' : 'Enable'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-success ms-2"
               onClick={() => setUpdateModal(true)}
             >
               Update
@@ -83,14 +106,17 @@ const PostCard = ({ item }) => {
             <button
               type="button"
               className="btn btn-danger ms-2"
-              data-bs-toggle="modal"
-              data-bs-target="#deletePost"
+              onClick={() => setDeletePostModal(true)}
             >
               Delete
             </button>
           </div>
         )}
-        <div className="card-footer text-muted">2 days ago</div>
+        <div
+          className={`card-footer ${item.active ? '' : 'bg-danger'} text-muted`}
+        >
+          {item.user._id === auth._id && 'Your post is disabled by the admin, contact customer support.'}
+        </div>
       </div>
 
       {updateModal && (
@@ -99,37 +125,74 @@ const PostCard = ({ item }) => {
         </Modal>
       )}
 
-      <div
-        className="modal fade"
-        id="deletePost"
-        tabIndex="-1"
-        aria-labelledby="deletePostLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-body">
-              Are you sure, you want to delete the Post?
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={deletePostHandler}
-                className="btn btn-primary"
-              >
-                Delete
-              </button>
+      {deletePostModal && (
+        <Modal>
+          <div
+            className=""
+            id="deletePost"
+            tabIndex="-1"
+            aria-labelledby="deletePostLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body">
+                  Are you sure, you want to delete the Post?
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setDeletePostModal(false)}
+                  >
+                    No
+                  </button>
+                  <button
+                    type="button"
+                    onClick={deletePostHandler}
+                    className="btn btn-primary"
+                  >
+                    Yes
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </Modal>
+      )}
+
+      {disablePostModal && (
+        <Modal>
+          <div className="" id="disablePost" tabIndex="-1">
+            <div className="modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body">
+                  Are you sure, you want to {item.active ? 'disable' : 'enable'}{' '}
+                  this Post?
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setDisablePostModal(false)}
+                  >
+                    No
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      disablePostHandler(item.active ? 'false' : 'true')
+                    }
+                    className="btn btn-primary"
+                  >
+                    Yes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
     </Fragment>
   );
 };

@@ -8,6 +8,7 @@ const SettingsCard = ({ user }) => {
   const auth = useContext(AuthContext);
   const imageRef = useRef();
   const [updateProfileModal, setUpdateProfileModal] = useState(false);
+  const [deactivateModal, setDeactivateModal] = useState(false);
 
   const onUpdatePicHandler = () => {
     imageRef.current.click();
@@ -25,8 +26,19 @@ const SettingsCard = ({ user }) => {
         bodyFormData
       );
       console.log(data);
-      auth.getData(data)
+      auth.getData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const deactiveUserHandler = async (status) => {
+    try {
+      const { data } = await axios.patch(
+        `http://localhost:5000/api/user/active/${user._id}?active=${status}`
+      );
+      console.log(data);
+      setDeactivateModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -77,16 +89,19 @@ const SettingsCard = ({ user }) => {
           >
             Update
           </button>
-          <button
-            type="button"
-            className="btn btn-danger ms-2"
-            data-bs-toggle="modal"
-            data-bs-target="#deletePost"
-          >
-            Deactivate
-          </button>
+          {auth.role === 'admin' && auth._id !== user._id && (
+            <button
+              type="button"
+              className="btn btn-danger ms-2"
+              onClick={() => setDeactivateModal(true)}
+            >
+              {user.active ? 'Deactivate' : 'Activate'}
+            </button>
+          )}
         </div>
-        <div className="card-footer text-muted">2 days ago</div>
+        <div
+          className={`card-footer ${user.active ? '' : 'bg-danger'} text-muted`}
+        ></div>
       </div>
 
       {updateProfileModal && (
@@ -95,6 +110,39 @@ const SettingsCard = ({ user }) => {
             item={user}
             setUpdateModal={setUpdateProfileModal}
           />
+        </Modal>
+      )}
+
+      {deactivateModal && (
+        <Modal>
+          <div className="" id="disablePost" tabIndex="-1">
+            <div className="modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body">
+                  Are you sure, you want to {user.active ? 'disable' : 'enable'}{' '}
+                  this Post?
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setDeactivateModal(false)}
+                  >
+                    No
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      deactiveUserHandler(user.active ? 'false' : 'true')
+                    }
+                    className="btn btn-primary"
+                  >
+                    Yes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </Modal>
       )}
     </Fragment>

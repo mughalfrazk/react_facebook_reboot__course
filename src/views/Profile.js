@@ -1,10 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useOutletContext } from 'react-router-dom';
 
 import PostList from '../components/PostList';
 import { AuthContext } from '../context/auth-context';
 
 const Profile = () => {
+  const setSpacing = useOutletContext();
+
+  useEffect(() => {
+    setSpacing(true);
+  }, []);
+
   const auth = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
 

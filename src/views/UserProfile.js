@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
+
 import { useParams } from 'react-router-dom';
 import SettingsCard from '../components/SettingsCard';
 
 const UserProfile = () => {
+  const setSpacing = useOutletContext();
+
+  useEffect(() => {
+    setSpacing(true);
+  }, []);
+
   const { id } = useParams();
   const [user, setUser] = useState();
 

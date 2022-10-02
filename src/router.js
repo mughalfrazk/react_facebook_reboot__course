@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import Layout from './components/Layout';
@@ -13,6 +13,8 @@ import CreatePost from './views/CreatePost';
 import UserList from './views/UserList';
 import UserProfile from './views/UserProfile';
 import { AuthContext } from './context/auth-context';
+import DisabledPosts from './views/DisabledPosts';
+import CreateAdmin from './views/CreateAdmin';
 
 const AppRouter = () => {
   const auth = useContext(AuthContext);
@@ -63,25 +65,43 @@ const AppRouter = () => {
               }
             />
             {auth.role === 'admin' && (
-              <Route path="users" exact>
+              <Fragment>
+                <Route path="users" exact>
+                  <Route
+                    index
+                    exact
+                    element={
+                      <Guard>
+                        <UserList />
+                      </Guard>
+                    }
+                  />
+                  <Route
+                    path=":id"
+                    element={
+                      <Guard>
+                        <UserProfile />
+                      </Guard>
+                    }
+                  />
+                </Route>
                 <Route
-                  index
-                  exact
+                  path="disabled-post"
                   element={
                     <Guard>
-                      <UserList />
+                      <DisabledPosts />
                     </Guard>
                   }
                 />
                 <Route
-                  path=":id"
+                  path="create-admin"
                   element={
                     <Guard>
-                      <UserProfile />
+                      <CreateAdmin />
                     </Guard>
                   }
                 />
-              </Route>
+              </Fragment>
             )}
           </Route>
 

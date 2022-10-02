@@ -1,11 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../context/auth-context';
 
 const CreatePost = (props) => {
+  const setSpacing = useOutletContext();
+
+  useEffect(() => {
+    setSpacing(true)
+  }, [])
+
   const navigate = useNavigate();
   const authData = useContext(AuthContext);
   const [error, setError] = useState('');

@@ -6,13 +6,17 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../context/auth-context';
 
-const Signup = (props) => {
+const Signup = ({ role }) => {
   const navigate = useNavigate();
   const authData = useContext(AuthContext);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const SignUpApi = async (values) => {
+    if (role === 'admin') {
+      values.role = 'admin';
+    }
+
     setLoading(true);
     try {
       const { data } = await axios.post(
@@ -42,9 +46,10 @@ const Signup = (props) => {
     password: Yup.string().min(8).required('Password is required.'),
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values, { resetForm }) => {
     const data = await SignUpApi(values);
-    if (data) {
+    resetForm()
+    if (data && role !== 'admin') {
       authData.getData(data);
       navigate('/');
     }
@@ -62,7 +67,7 @@ const Signup = (props) => {
             >
               {(props) => (
                 <Form className="card-body pt-4">
-                  <h2 className="text-center">Register a new account.</h2>
+                  <h2 className="text-center">{role !== 'admin' ? 'Register a new account.' : 'Create a new admin.'}</h2>
                   {error && (
                     <h6 className="text-warning text-center">{error}</h6>
                   )}

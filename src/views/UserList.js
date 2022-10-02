@@ -31,6 +31,7 @@ const UserList = () => {
           <th scope="col">Email</th>
           <th scope="col">Username</th>
           <th scope="col">Role</th>
+          <th scope="col">Status</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
@@ -41,6 +42,7 @@ const UserList = () => {
           <td>{item.email}</td>
           <td>{item.username}</td>
           <td>{item.role}</td>
+          <td>{item.active ? <span className='badge bg-success'>Active</span> : <span className='badge bg-danger'>Inactive</span>}</td>
           <td>
             <Link to={`/users/${item._id}`} className="btn btn-primary btn-sm">
               View

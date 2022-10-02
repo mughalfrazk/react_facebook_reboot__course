@@ -1,11 +1,16 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useOutletContext } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 
 const Post = () => {
+  const setSpacing = useOutletContext();
   const params = useParams();
   const [post, setPost] = useState();
+
+  useEffect(() => {
+    setSpacing(true);
+  }, []);
 
   const getSingleItem = async (id) => {
     try {

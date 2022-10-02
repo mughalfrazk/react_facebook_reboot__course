@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
 import { AuthContext } from '../context/auth-context';
@@ -53,14 +53,28 @@ const Header = () => {
               </NavLink>
             </li>
             {auth.role === 'admin' && (
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/users">
-                  Users List
-                </NavLink>
-              </li>
+              <Fragment>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/create-admin">
+                    Create New Admin
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/users">
+                    Users List
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/disabled-post">
+                    Disabled Posts
+                  </NavLink>
+                </li>
+              </Fragment>
             )}
           </ul>
-            {auth.role === 'admin' && <span className="badge bg-dark rounded-pill">Admin</span>}
+          {auth.role === 'admin' && (
+            <span className="badge bg-dark rounded-pill">Admin</span>
+          )}
           <div className="dropdown">
             <a
               className="nav-link dropdown-toggle text-white"
@@ -73,16 +87,7 @@ const Header = () => {
               {auth.email}
             </a>
             <div className="dropdown-menu">
-              <a className="dropdown-item" href="#">
-                Action
-              </a>
-              <a className="dropdown-item" href="#">
-                Another action
-              </a>
-              <a className="dropdown-item" href="#">
-                Something else here
-              </a>
-              <div className="dropdown-divider"></div>
+              {/* <div className="dropdown-divider"></div> */}
               <button className="dropdown-item" onClick={logoutUser}>
                 Logout
               </button>
